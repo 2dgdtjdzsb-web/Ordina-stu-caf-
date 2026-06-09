@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Ordine Caffè"/>
+<title>☕ Ordine Caffè</title>
+<style>
+:root{
+  --bg:#F5F0E8;
+  --card:#FFFDF9;
+  --accent:#2C1A0E;
+  --accent2:#6B3F1F;
+  --gold:#C8A96E;
+  --gold-light:#EDD9A3;
+  --text:#1A1008;
+  --text-muted:#7A6248;
+  --border:#D9C9B0;
+  --r:14px;--rs:10px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+*{-webkit-box-sizing:border-box;box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+  font-size:16px;
+  padding-bottom:calc(40px + var(--safe-bot));
+}
+.hdr{
+  background:var(--accent);
+  color:#FFF8EE;
+  padding:calc(14px + var(--safe-top)) 16px 14px;
+  position:sticky;top:0;z-index:20;
+}
+.hdr-row{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:10px;margin-bottom:3px;}
+.hdr h1{font-size:20px;font-weight:700;letter-spacing:-.3px;}
+.hdr p{font-size:13px;color:var(--gold-light);opacity:.9;}
+.body{padding:14px 14px 20px;}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:14px;}
+.card-ttl{
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--text-muted);margin-bottom:16px;
+  display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:6px;
+}
+.card-ttl::before{content:'';display:block;width:3px;height:13px;background:var(--gold);border-radius:2px;-webkit-flex-shrink:0;flex-shrink:0;}
+
+.flabel{font-size:13px;font-weight:500;color:var(--text-muted);display:block;margin-bottom:6px;}
+
+/* iOS-friendly select: never use disabled */
+.sel-group{margin-bottom:14px;}
+select{
+  width:100%;
+  padding:13px 40px 13px 14px;
+  border:1.5px solid var(--border);
+  border-radius:var(--rs);
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+  font-size:16px; /* prevents iOS zoom on focus */
+  -webkit-appearance:none;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%237A6248' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  cursor:pointer;
+}
+select:focus{outline:none;border-color:var(--gold);}
+
+input[type=text],textarea{
+  width:100%;
+  padding:13px 14px;
+  border:1.5px solid var(--border);
+  border-radius:var(--rs);
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+  font-size:16px; /* prevents iOS zoom */
+  margin-bottom:14px;
+  -webkit-appearance:none;
+  appearance:none;
+}
+textarea{resize:vertical;min-height:75px;}
+input:focus,textarea:focus{outline:none;border-color:var(--gold);}
+
+.qty-row{
+  display:-webkit-flex;display:flex;
+  -webkit-align-items:center;align-items:center;
+  -webkit-justify-content:space-between;justify-content:space-between;
+  margin-bottom:14px;
+}
+.qty-lbl{font-size:13px;font-weight:500;color:var(--text-muted);}
+.qty-ctrl{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:12px;}
+.qb{
+  width:38px;height:38px;
+  border:1.5px solid var(--border);border-radius:var(--rs);
+  background:var(--bg);color:var(--accent);
+  font-size:22px;cursor:pointer;
+  display:-webkit-flex;display:flex;
+  -webkit-align-items:center;align-items:center;
+  -webkit-justify-content:center;justify-content:center;
+  font-weight:600;
+  -webkit-user-select:none;user-select:none;
+}
+.qb:active{background:var(--border);}
+.qn{font-size:19px;font-weight:700;min-width:26px;text-align:center;color:var(--accent);font-variant-numeric:tabular-nums;}
+
+.btn{
+  display:block;width:100%;
+  padding:15px;
+  border-radius:var(--rs);
+  font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+  font-size:16px;font-weight:600;
+  cursor:pointer;border:none;text-align:center;
+  -webkit-appearance:none;
+}
+.btn:active{opacity:.8;}
+.btn-sec{background:transparent;border:1.5px solid var(--border);color:var(--accent2);margin-bottom:10px;}
+.btn-pri{background:var(--accent);color:#FFF8EE;}
+.btn-sm{
+  padding:8px 14px;font-size:13px;font-weight:500;
+  background:transparent;border:1px solid var(--border);
+  color:var(--text-muted);border-radius:var(--rs);cursor:pointer;
+  font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+  -webkit-appearance:none;
+}
+
+/* basket */
+.b-item{
+  display:-webkit-flex;display:flex;
+  -webkit-justify-content:space-between;justify-content:space-between;
+  -webkit-align-items:flex-start;align-items:flex-start;
+  padding:10px 12px;border-radius:var(--rs);background:var(--bg);margin-bottom:7px;
+}
+.b-txt{font-size:14px;color:var(--text);-webkit-flex:1;flex:1;line-height:1.5;}
+.b-qty{font-size:13px;font-weight:700;color:var(--gold);margin:0 10px;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.xbtn{background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:18px;padding:2px;line-height:1;-webkit-flex-shrink:0;flex-shrink:0;}
+.empty-note{font-size:14px;color:var(--text-muted);font-style:italic;padding:4px 0 8px;}
+.divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
+
+/* summary */
+.sec-hdr{
+  display:-webkit-flex;display:flex;
+  -webkit-justify-content:space-between;justify-content:space-between;
+  -webkit-align-items:center;align-items:center;
+  margin-bottom:12px;
+}
+.sec-ttl{font-size:17px;font-weight:700;color:var(--accent);}
+.o-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+.o-person{
+  display:-webkit-flex;display:flex;
+  -webkit-align-items:center;align-items:center;
+  gap:10px;margin-bottom:10px;
+}
+.avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--gold-light);
+  display:-webkit-flex;display:flex;
+  -webkit-align-items:center;align-items:center;
+  -webkit-justify-content:center;justify-content:center;
+  font-size:13px;font-weight:700;color:var(--accent2);
+  -webkit-flex-shrink:0;flex-shrink:0;
+}
+.o-name{font-size:15px;font-weight:700;color:var(--accent);-webkit-flex:1;flex:1;}
+.o-line{
+  font-size:13px;color:var(--text-muted);
+  padding:5px 0;
+  border-bottom:1px dashed var(--border);
+  display:-webkit-flex;display:flex;
+  -webkit-justify-content:space-between;justify-content:space-between;
+  gap:8px;
+}
+.o-line:last-child{border-bottom:none;}
+.o-qty{font-weight:700;color:var(--accent2);white-space:nowrap;font-variant-numeric:tabular-nums;}
+.o-comment{
+  font-size:13px;color:var(--accent2);
+  background:var(--gold-light);border-radius:8px;
+  padding:7px 10px;margin-top:10px;font-style:italic;line-height:1.5;
+}
+
+.stats-grid{
+  display:-webkit-flex;display:flex;
+  gap:10px;margin-top:12px;
+}
+.stat{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--rs);padding:12px;text-align:center;
+  -webkit-flex:1;flex:1;
+}
+.stat-v{font-size:26px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;}
+.stat-l{font-size:12px;color:var(--text-muted);margin-top:3px;}
+.no-orders{text-align:center;padding:28px 0;color:var(--text-muted);font-size:15px;line-height:1.7;}
+
+/* toast */
+.toast{
+  position:fixed;bottom:calc(24px + var(--safe-bot));left:50%;
+  -webkit-transform:translateX(-50%);transform:translateX(-50%);
+  background:var(--accent);color:#FFF8EE;
+  border-radius:24px;padding:10px 20px;
+  font-size:14px;font-weight:600;
+  opacity:0;-webkit-transition:opacity .2s;transition:opacity .2s;
+  pointer-events:none;white-space:nowrap;z-index:100;
+  -webkit-box-shadow:0 4px 20px rgba(0,0,0,.3);box-shadow:0 4px 20px rgba(0,0,0,.3);
+}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-row">
+    <span style="font-size:24px">☕</span>
+    <h1>Ordine Caffè</h1>
+  </div>
+  <p>Scegli marca, formato, miscela → aggiungi al carrello → conferma</p>
+</div>
+
+<div class="body">
+
+<!-- SELEZIONE -->
+<div class="card">
+  <div class="card-ttl">scegli prodotto</div>
+
+  <div class="sel-group">
+    <span class="flabel">Marca</span>
+    <select id="sMarca" onchange="onMarca()">
+      <option value="">— seleziona marca —</option>
+      <option>Caffè Borbone</option>
+      <option>Caffè Lollo</option>
+      <option>Caffè Covim</option>
+      <option>Caffè Kimbo</option>
+      <option>Caffè Aroma Light</option>
+      <option>Caffè Toraldo</option>
+      <option>Solubili</option>
+      <option>KIT Caffè</option>
+    </select>
+  </div>
+
+  <div class="sel-group">
+    <span class="flabel">Formato</span>
+    <select id="sFormato" onchange="onFormato()">
+      <option value="">— prima scegli la marca —</option>
+    </select>
+  </div>
+
+  <div class="sel-group">
+    <span class="flabel">Miscela</span>
+    <select id="sMiscela">
+      <option value="">— prima scegli il formato —</option>
+    </select>
+  </div>
+
+  <div class="qty-row">
+    <span class="qty-lbl">Quantità (confezioni)</span>
+    <div class="qty-ctrl">
+      <button class="qb" onclick="chQty(-1)">−</button>
+      <span class="qn" id="qtyN">1</span>
+      <button class="qb" onclick="chQty(1)">+</button>
+    </div>
+  </div>
+
+  <button class="btn btn-sec" onclick="addToBasket()">+ Aggiungi al carrello</button>
+</div>
+
+<!-- CARRELLO -->
+<div class="card">
+  <div class="card-ttl">carrello &amp; conferma</div>
+  <div id="basketList"><p class="empty-note">Nessun prodotto aggiunto</p></div>
+  <div class="divider"></div>
+
+  <span class="flabel">Il tuo nome</span>
+  <input type="text" id="nameInp" placeholder="es. Marco" maxlength="40" autocomplete="given-name"/>
+
+  <span class="flabel">Commento (opzionale)</span>
+  <textarea id="commentInp" placeholder="es. urgente, consegna in ufficio…"></textarea>
+
+  <button class="btn btn-pri" onclick="confirmOrder()">✓ Conferma ordine</button>
+</div>
+
+<!-- RIEPILOGO -->
+<div class="sec-hdr">
+  <span class="sec-ttl">📋 Riepilogo ordini</span>
+  <button class="btn-sm" onclick="clearAll()">Svuota tutto</button>
+</div>
+
+<div id="orderList">
+  <p class="no-orders">Nessun ordine ancora.<br/>Sii il primo! ☕</p>
+</div>
+
+<div id="statsWrap" style="display:none;">
+  <div class="stats-grid">
+    <div class="stat"><div class="stat-v" id="sPeople">0</div><div class="stat-l">persone</div></div>
+    <div class="stat"><div class="stat-v" id="sTot">0</div><div class="stat-l">confezioni totali</div></div>
+  </div>
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var DATA = {
+  "Caffè Borbone":{f:["Cialde","Espresso Point","Nespresso","A Modo Mio","Dolce Gusto","Bialetti"],m:["Miscela Nera","Miscela Rossa","Miscela Blu","Miscela Oro","Miscela DEK"]},
+  "Caffè Lollo":{f:["Cialde","Espresso Point","Nespresso","A Modo Mio","Dolce Gusto","Bialetti"],m:["Miscela Argento","Miscela Nera","Miscela Classica","Miscela Oro","Miscela DEK"]},
+  "Caffè Covim":{f:["Cialde","Espresso Point","Nespresso","A Modo Mio","Dolce Gusto","Bialetti"],m:["Miscela Granbar","Miscela Oro","Miscela DEK"]},
+  "Caffè Kimbo":{f:["Cialde","Espresso Point","Nespresso","A Modo Mio","Dolce Gusto","Bialetti"],m:["Miscela Napoli Espresso","Miscela Armonia","Miscela DEK"]},
+  "Caffè Aroma Light":{f:["Cialde","Espresso Point","Nespresso","A Modo Mio","Dolce Gusto","Bialetti"],m:["Miscela Nera","Miscela Rossa","Miscela Blu","Miscela Oro","Miscela DEK"]},
+  "Caffè Toraldo":{f:["Cialde","Espresso Point","Nespresso","A Modo Mio","Dolce Gusto","Bialetti"],m:["Miscela Classica","Miscela Cremosa","Miscela Arabica"]},
+  "Solubili":{f:["Cialde","Espresso Point","Nespresso","A Modo Mio","Dolce Gusto"],m:["Miscela Nera","Miscela Rossa","Miscela Blu","Miscela Oro","Miscela DEK"]},
+  "KIT Caffè":{kit:true}
+};
+
+var qty = 1, basket = [], orders = [];
+
+function fill(selId, items, placeholder) {
+  var sel = document.getElementById(selId);
+  sel.innerHTML = '<option value="">' + placeholder + '</option>';
+  for (var i = 0; i < items.length; i++) {
+    var o = document.createElement('option');
+    o.textContent = items[i];
+    sel.appendChild(o);
+  }
+}
+
+function onMarca() {
+  var marca = document.getElementById('sMarca').value;
+  fill('sFormato', [], '— prima scegli la marca —');
+  fill('sMiscela', [], '— prima scegli il formato —');
+  if (!marca) return;
+  var d = DATA[marca];
+  if (d.kit) {
+    fill('sFormato', ['KIT (set completo)'], '— seleziona —');
+    fill('sMiscela', ['—'], '—');
+    return;
+  }
+  fill('sFormato', d.f, '— seleziona formato —');
+}
+
+function onFormato() {
+  var marca = document.getElementById('sMarca').value;
+  var formato = document.getElementById('sFormato').value;
+  fill('sMiscela', [], '— prima scegli il formato —');
+  if (!formato || !marca) return;
+  var d = DATA[marca];
+  if (d.kit) return;
+  fill('sMiscela', d.m, '— seleziona miscela —');
+}
+
+function chQty(d) {
+  qty = Math.max(1, Math.min(99, qty + d));
+  document.getElementById('qtyN').textContent = qty;
+}
+
+function addToBasket() {
+  var marca = document.getElementById('sMarca').value;
+  if (!marca) { showToast('Seleziona una marca'); return; }
+  var d = DATA[marca];
+  var label;
+  if (d.kit) {
+    label = 'KIT Caffè';
+  } else {
+    var formato = document.getElementById('sFormato').value;
+    var miscela = document.getElementById('sMiscela').value;
+    if (!formato) { showToast('Seleziona il formato'); return; }
+    if (!miscela || miscela === '—') { showToast('Seleziona la miscela'); return; }
+    label = marca + '  ·  ' + formato + '  ·  ' + miscela;
+  }
+  basket.push({ label: label, qty: qty });
+  renderBasket();
+  showToast('✓ Aggiunto al carrello');
+  document.getElementById('sMarca').value = '';
+  fill('sFormato', [], '— prima scegli la marca —');
+  fill('sMiscela', [], '— prima scegli il formato —');
+  qty = 1;
+  document.getElementById('qtyN').textContent = 1;
+}
+
+function removeBasket(i) { basket.splice(i, 1); renderBasket(); }
+
+function renderBasket() {
+  var el = document.getElementById('basketList');
+  if (!basket.length) { el.innerHTML = '<p class="empty-note">Nessun prodotto aggiunto</p>'; return; }
+  var html = '';
+  for (var i = 0; i < basket.length; i++) {
+    html += '<div class="b-item"><span class="b-txt">' + basket[i].label + '</span><span class="b-qty">' + basket[i].qty + '×</span><button class="xbtn" onclick="removeBasket(' + i + ')">✕</button></div>';
+  }
+  el.innerHTML = html;
+}
+
+function confirmOrder() {
+  var name = document.getElementById('nameInp').value.trim();
+  var comment = document.getElementById('commentInp').value.trim();
+  if (!basket.length) { showToast('Aggiungi almeno un prodotto'); return; }
+  if (!name) { showToast('Inserisci il tuo nome'); return; }
+  orders.push({ name: name, items: basket.slice(), comment: comment });
+  basket = [];
+  renderBasket();
+  renderOrders();
+  document.getElementById('nameInp').value = '';
+  document.getElementById('commentInp').value = '';
+  showToast('✓ Ordine di ' + name + ' confermato!');
+}
+
+function removeOrder(i) { orders.splice(i, 1); renderOrders(); }
+
+function clearAll() {
+  if (window.confirm('Svuotare tutti gli ordini?')) { orders = []; renderOrders(); }
+}
+
+function initials(n) {
+  var parts = n.trim().split(' ');
+  var r = '';
+  for (var i = 0; i < parts.length; i++) { if (parts[i]) r += parts[i][0]; }
+  return r.toUpperCase().slice(0, 2);
+}
+
+function renderOrders() {
+  var el = document.getElementById('orderList');
+  var sw = document.getElementById('statsWrap');
+  if (!orders.length) {
+    el.innerHTML = '<p class="no-orders">Nessun ordine ancora.<br/>Sii il primo! ☕</p>';
+    sw.style.display = 'none'; return;
+  }
+  var html = '';
+  var totC = 0;
+  for (var i = 0; i < orders.length; i++) {
+    var o = orders[i];
+    var lines = '';
+    for (var j = 0; j < o.items.length; j++) {
+      totC += o.items[j].qty;
+      lines += '<div class="o-line"><span>' + o.items[j].label + '</span><span class="o-qty">' + o.items[j].qty + ' conf.</span></div>';
+    }
+    var commentHtml = o.comment ? '<div class="o-comment">💬 ' + o.comment + '</div>' : '';
+    html += '<div class="o-card"><div class="o-person"><div class="avatar">' + initials(o.name) + '</div><span class="o-name">' + o.name + '</span><button class="xbtn" onclick="removeOrder(' + i + ')">✕</button></div>' + lines + commentHtml + '</div>';
+  }
+  el.innerHTML = html;
+  document.getElementById('sPeople').textContent = orders.length;
+  document.getElementById('sTot').textContent = totC;
+  sw.style.display = 'block';
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(function() { t.classList.remove('show'); }, 2200);
+}
+</script>
+</body>
+</html>
